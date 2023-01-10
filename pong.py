@@ -1,8 +1,9 @@
+# 3rd party import
 import pygame 
-
-from Ball import Ball
-from Paddles import Paddles
-from Score import Score
+# class imports for game
+from Graphics.Ball import Ball
+from Graphics.Paddles import Paddles
+from Graphics.Score import Score
 
 pygame.init()
 
@@ -43,39 +44,38 @@ def run():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-                
+        # movment for player
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP] and player.rect.y > 0:
             player.moveUp(5)
         if keys[pygame.K_DOWN] and player.rect.y < HEIGT-100:
             player.moveDown(5)
-            
+        # enemy "AI"
         if enemy.rect.y >= ball.rect.y and enemy.rect.y > 0:
             enemy.moveUp(5)
         if enemy.rect.y <= ball.rect.y and enemy.rect.y < HEIGT-100:
             enemy.moveDown(5)
-            
+        # see if the ball has scored and update score
         if ball.rect.x >= WIDTH-15:
             ball.reset()
             score.update_score(enemy_scored = True)
         if ball.rect.x <= 0:
             ball.reset()
             score.update_score(player_scored = True)
-            
+        # collision for borders
         if ball.rect.y > HEIGT-15:
             ball.velocity[1] = -ball.velocity[1]
         if ball.rect.y < 0:
             ball.velocity[1] = -ball.velocity[1]
-        
+        # collision for pads
         if ball.rect.collidelist(pads) >= 0:
             ball.bounce()
-        
+        # updates game 
         all_sprites_list.update()
         screen.fill(BLACK)
+        screen.blit(score.text, score.textrect)
         all_sprites_list.draw(screen)
         clock.tick(60)
-        screen.blit(score.text, score.textrect)
-        
         pygame.display.flip()
         
 if __name__ == "__main__":
